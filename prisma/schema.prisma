@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String         @id @default(cuid())
+  code                String?        @unique
+  email               String?        @unique
+  emailVerified       DateTime?
+  passwordDigest      String?
+  phoneNumber         String         @unique
+  phoneNumberVerified DateTime?
+  role                UserRole       @default(PATIENT)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  pin                 String?
+  pinCreatedAt        DateTime?
+  pinType             String?
+  pinVerifiedAt       DateTime?
+  profile             Profile?
+  tags                String[]       @default([])
+  region              PatientRegion? //Gadaad, Oron nutag, Ulaanbaatar
+  appointment         Appointment[]
+  patientNote         PatientNote[]
+  prescription        Prescription[]
+}
+
+enum PatientRegion {
+  GADAAD
+  ORON_NUTAG
+  ULAANBAATAR
+}
+
+model Tags {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#fff")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  firstName          String    @default("")
+  lastName           String    @default("")
+  sex                String?
+  dob                String?
+  height             Int?
+  weight             Int?
+  picture            String?
+  priceMin           Int?
+  priceMax           Int?
+  notifyEmail        Boolean   @default(true)
+  notifyPush         Boolean   @default(true)
+  notifyBadge        Boolean   @default(true)
+  historyId          String?   @unique
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  specialistDesc     String?
+  patientCode        String?   @unique
+  allowPatientAssign DateTime?
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model SmsRequestAttempt {
+  id          String   @id @default(cuid())
+  phoneNumber String
+  ipAddress   String
+  createdAt   DateTime @default(now())
+}
+
+model FileUpload {
+  id                   String    @id @default(cuid())
+  fileGroup            String?
+  fileLink             String
+  fileSource           String
+  removedAt            DateTime?
+  createdBy            String
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  fileCategory         String?
+  fileSourceDate       String?
+  patientNoteId        String?
+  fileMIMEType         String
+  specialistQuestionId String?
+}
+
+enum UserRole {
+  PATIENT
+  LOCAL_DOCTOR
+  ADMIN
+  NURSE
+}
+
+model IP2Location {
+  id          String   @id @default(cuid())
+  ipFrom      BigInt
+  ipTo        BigInt
+  countryCode String
+  country     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FirebaseToken {
+  id        String   @id @default(cuid())
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model News {
+  id          String    @id @default(cuid())
+  categories  String[]  @default([])
+  img         String    @default("")
+  youtubeLink String?
+  title       String    @default("")
+  content     String    @default("")
+  releasedAt  DateTime?
+  approved    Boolean
+  approvedBy  String?
+  createdAt   DateTime  @default(now())
+  createdBy   String?
+  updatedAt   DateTime  @updatedAt
+  updatedBy   String?
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Appointment {
+  id           String            @id @default(cuid())
+  patientId    String
+  status       AppointmentStatus
+  type         AppointmentType
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  patient      User              @relation(fields: [patientId], references: [id])
+  patientNote  PatientNote[]
+  prescription Prescription[]
+}
+
+enum AppointmentStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum AppointmentType {
+  DOCTOR_EXAMINATION
+  LAB_TEST
+}
+
+model PatientNote {
+  id            String          @id @default(cuid())
+  appointmentId String?
+  appointment   Appointment?    @relation(fields: [appointmentId], references: [id])
+  patientId     String
+  note          String
+  type          PatientNoteType @default(GENERAL)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  patient       User            @relation(fields: [patientId], references: [id])
+}
+
+enum PatientNoteType {
+  GENERAL
+  RENTGEN
+  FLUR
+}
+
+model Prescription {
+  id            String       @id @default(cuid())
+  drugId        String
+  drug          Drug         @relation(fields: [drugId], references: [id])
+  description   String
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  startDate     DateTime
+  duration      Int
+  endDate       DateTime
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Drug {
+  id           String         @id @default(cuid())
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Prescription Prescription[]
+}
