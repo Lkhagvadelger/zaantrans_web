@@ -1,15 +1,13 @@
-import { PatientRegion, UserRole } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { Avatar, AvatarBadge, useColorModeValue } from "@ui/index";
 import { FaCogs, FaStethoscope, FaUserInjured } from "react-icons/fa";
 
 export const UserAvatar = ({
   phoneNumber,
   code,
-  region,
 }: {
   phoneNumber?: string | null;
   code?: string | null;
-  region?: PatientRegion;
 }) => {
   return (
     <Avatar
@@ -20,21 +18,8 @@ export const UserAvatar = ({
       bg={stringToColor(phoneNumber + "" + code)}
       name={code + ""}
       color={"white"}
-      // icon={
-      //   role === UserRole.ADMIN ? (
-      //     <FaCogs />
-      //   ) : role === UserRole.LOCAL_DOCTOR ? (
-      //     <FaStethoscope />
-      //   ) : role === UserRole.PATIENT ? (
-      //     <FaUserInjured />
-      //   ) : (
-      //     <></>
-      //   )
-      // }
     >
-      <AvatarBadge boxSize="6" fontSize="0 !important">
-        {region}
-      </AvatarBadge>
+      <AvatarBadge boxSize="6" fontSize="0 !important"></AvatarBadge>
     </Avatar>
   );
 };

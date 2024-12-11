@@ -61,8 +61,8 @@ export const getUserList = async (filter: QueryParamType) => {
     filters.length === 0
       ? {}
       : filters.length === 1
-      ? filters[0]
-      : { AND: filters };
+        ? filters[0]
+        : { AND: filters };
   const total = await prisma.user.count({ where });
 
   return {
@@ -87,71 +87,6 @@ export const getUserList = async (filter: QueryParamType) => {
   };
 };
 
-export const getHospitalUserList = async (
-  filter: QueryParamType,
-  userId: string
-) => {
-  const size = Number(filter.size),
-    page = Number(filter.page);
-
-  if (size <= 0 || page <= 0)
-    throw AppError.BadRequest("validation.paging.size");
-
-  const filters: any | any[] = [];
-  if (filter.invitedByMeOnly === "true") filters.push({ invitedBy: userId });
-  else
-    filters.push({
-      hospitalUsers: { some: { hospitalId: filter.hospitalId } },
-    });
-  if (filter.role) filters.push({ role: filter.role });
-  if (filter.text) {
-    const fText = { contains: filter.text, mode: "insensitive" };
-    filters.push({
-      OR: [
-        { phoneNumber: fText },
-        { email: fText },
-        {
-          profile: {
-            OR: [{ firstName: fText }, { lastName: fText }],
-          },
-        },
-      ],
-    });
-  }
-
-  const where =
-    filters.length === 0
-      ? {}
-      : filters.length === 1
-      ? filters[0]
-      : { AND: filters };
-  const total = await prisma.user.count({ where });
-
-  return {
-    total,
-    pages: Math.ceil(total / size),
-    data: await prisma.user.findMany({
-      where,
-      include: {
-        profile: {
-          select: {
-            patientCode: true,
-            firstName: true,
-            lastName: true,
-            specialistDesc: true,
-            priceMin: true,
-            priceMax: true,
-            sex: true,
-            dob: true,
-          },
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      skip: size * (page - 1),
-      take: size,
-    }),
-  };
-};
 
 export const getUser = async (email: string) => {
   return prisma.user.findUnique({
@@ -219,11 +154,7 @@ export const createUser = async (email: string, password: string) => {
 export const createUserWithPhone = async (
   phoneNumber: string,
   password: string,
-  email?: string,
   role?: UserRole,
-  inviteToken?: string,
-  invitedBy?: string,
-  hospitalId?: string
 ) => {
   //default role = Patient, no need to mention
   const passwordDigest = await hash(password, saltRounds);
@@ -231,7 +162,6 @@ export const createUserWithPhone = async (
   const newUser = await prisma.user.create({
     data: {
       phoneNumber,
-      email: email?.toLowerCase(),
       passwordDigest,
       phoneNumberVerified: getCurrentDate(),
       role,
@@ -249,29 +179,20 @@ export const createUserWithPhone = async (
 
 export const createUserProfileWithPhone = async (
   phoneNumber: string,
-  password: string,
   firstName: string,
   lastName: string,
-  dob: string,
-  email?: string,
-  role?: UserRole,
-  sex?: any,
-  inviteToken?: string,
-  invitedBy?: string
+  role: UserRole,
 ) => {
   //default role = Patient, no need to mention
-  const passwordDigest = await hash(password, saltRounds);
+  const passwordDigest = await hash("password", saltRounds);
   return prisma.user.create({
     data: {
       phoneNumber,
-      email: email?.toLowerCase(),
       passwordDigest,
       phoneNumberVerified: getCurrentDate(),
       role,
       profile: {
         create: {
-          dob,
-          sex,
           firstName,
           lastName,
         },

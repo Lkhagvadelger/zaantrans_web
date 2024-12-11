@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { useCreateUser } from "@lib/user/data/userHooks";
 import { UserRole } from "@prisma/client";
 import {
   Box,
@@ -41,6 +42,7 @@ export const AuthFormAdminInvite = ({
   onComplete: () => void;
   role?: UserRole;
 }) => {
+  const createUserMutation = useCreateUser();
   const { t: ta } = useTranslation("auth");
   const { t: to } = useTranslation("common");
   const { t: te } = useTranslation("error");
@@ -50,13 +52,12 @@ export const AuthFormAdminInvite = ({
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    role: role || UserRole.LOCAL_DOCTOR,
+    role: role || UserRole.DRIVER,
   };
   if (process.env.NODE_ENV !== "production") {
     defaultValues.code = faker.word.noun(8);
     defaultValues.firstName = faker.name.firstName();
     defaultValues.lastName = faker.name.lastName();
-    defaultValues.phoneNumber = faker.phone.phoneNumber("00000000");
   }
 
   const {
@@ -70,10 +71,18 @@ export const AuthFormAdminInvite = ({
     defaultValues: defaultValues,
   });
 
-  const onPhoneSubmit: SubmitHandler<InviteInput> = (authInput) => {};
+  const onPhoneSubmit: SubmitHandler<InviteInput> = (authInput) => {
+    console.log(authInput);
+    createUserMutation.mutate(authInput, {
+      onSuccess: () => {
+        onComplete();
+        toaster.success("Хэрэглэгч амжилттай бүртгэгдлээ");
+      },
+    });
+  };
 
   const roleList: selectInput[] = Object.keys(UserRole).map((r, ii) => ({
-    label: ta("role." + r),
+    label: r,
     value: r,
   }));
 
@@ -81,10 +90,7 @@ export const AuthFormAdminInvite = ({
     roleList.filter((r) => r.value == getValues("role"))[0]
   );
 
-  const [selectedSex, setSelectedSex] = useState({
-    label: "",
-    value: "",
-  });
+
   return (
     <chakra.form onSubmit={handleSubmit(onPhoneSubmit)}>
       <HStack spacing={4}>
@@ -166,7 +172,7 @@ export const AuthFormAdminInvite = ({
           </FormErrorMessage>
         </FormControl>
         <Box w="full">
-          <Button type="submit" size="md" variant="add">
+          <Button type="submit" size="md" variant="add" isLoading={createUserMutation.isLoading}>
             Хадгалах
           </Button>
         </Box>

@@ -32,10 +32,10 @@ const UserDescriptionDetails = (props: Props) => (
     </Box>
     <Box h="8">
       <Box fontSize="xs" color="gray.500">
-        {props.phoneNumber}
+        {props.profile?.lastName} овогтой {props.profile?.firstName}
       </Box>
       <Box fontSize="xs" color="gray.500">
-        {props.code ? props.code : "No code"}
+        {props.phoneNumber}
       </Box>
     </Box>
   </Stack>

@@ -10,7 +10,6 @@ export { Footer } from "./components/Footer";
 export { FrameLayout } from "./components/FrameLayout";
 export { NavMenuLayout } from "./components/NavMenuLayout";
 export { NavContentLayout } from "./components/NavContentLayout";
-export { Logo } from "./components/Logo";
 export { LinkBox } from "./components/LinkBox";
 export { LongTextBox } from "./components/LongTextBox";
 export { Card } from "./components/Card";

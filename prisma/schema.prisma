@@ -8,32 +8,24 @@ datasource db {
 }
 
 model User {
-  id                  String         @id @default(cuid())
-  code                String?        @unique
-  email               String?        @unique
+  id                  String           @id @default(cuid())
+  code                String?          @unique
+  email               String?          @unique
   emailVerified       DateTime?
   passwordDigest      String?
-  phoneNumber         String         @unique
+  phoneNumber         String           @unique
   phoneNumberVerified DateTime?
-  role                UserRole       @default(PATIENT)
-  createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  role                UserRole         @default(DRIVER)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
   pin                 String?
   pinCreatedAt        DateTime?
   pinType             String?
   pinVerifiedAt       DateTime?
   profile             Profile?
-  tags                String[]       @default([])
-  region              PatientRegion? //Gadaad, Oron nutag, Ulaanbaatar
-  appointment         Appointment[]
-  patientNote         PatientNote[]
-  prescription        Prescription[]
-}
-
-enum PatientRegion {
-  GADAAD
-  ORON_NUTAG
-  ULAANBAATAR
+  tags                String[]         @default([])
+  vehicle             Vehicle[]
+  transportation      Transportation[]
 }
 
 model Tags {
@@ -62,9 +54,6 @@ model Profile {
   historyId          String?   @unique
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
-  specialistDesc     String?
-  patientCode        String?   @unique
-  allowPatientAssign DateTime?
   user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -99,10 +88,8 @@ model FileUpload {
 }
 
 enum UserRole {
-  PATIENT
-  LOCAL_DOCTOR
   ADMIN
-  NURSE
+  DRIVER
 }
 
 model IP2Location {
@@ -122,94 +109,90 @@ model FirebaseToken {
   updatedAt DateTime @updatedAt
 }
 
-model News {
-  id          String    @id @default(cuid())
-  categories  String[]  @default([])
-  img         String    @default("")
-  youtubeLink String?
-  title       String    @default("")
-  content     String    @default("")
-  releasedAt  DateTime?
-  approved    Boolean
-  approvedBy  String?
-  createdAt   DateTime  @default(now())
-  createdBy   String?
-  updatedAt   DateTime  @updatedAt
-  updatedBy   String?
+model Vehicle {
+  id             String           @id @default(cuid())
+  plateNumber    String           @unique
+  cabinNumber    String?
+  countryName    String?
+  markName       String?
+  modelName      String?
+  buildYear      Int?
+  colorName      String?
+  type           String?
+  ownerType      String?
+  intent         String?
+  className      String?
+  motorNumber    String?
+  importDate     String?
+  fuelType       String?
+  manCount       Int?
+  axleCount      Int?
+  capacity       Float?
+  mass           Float?
+  weight         Float?
+  length         Float?
+  width          Float?
+  height         Float?
+  transmission   String?
+  wheelPosition  String?
+  rfid           String?
+  description    String?
+  driverId       String?
+  driver         User?            @relation(fields: [driverId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  Transportation Transportation[]
 }
 
-model Category {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model TransportLocation {
+  id                     String               @id @default(cuid())
+  shortName              String
+  description            String?
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  startingTransportation TransportDirection[] @relation("StartingTransportation")
+  endingTransportation   TransportDirection[] @relation("EndingTransportation")
 }
 
-model Appointment {
-  id           String            @id @default(cuid())
-  patientId    String
-  status       AppointmentStatus
-  type         AppointmentType
-  startDate    DateTime
-  endDate      DateTime
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  patient      User              @relation(fields: [patientId], references: [id])
-  patientNote  PatientNote[]
-  prescription Prescription[]
+model TransportDirection {
+  id                 String            @id @default(cuid())
+  shortName          String
+  totalDistance      Int?
+  totalTime          Int?
+  startingLocationId String
+  endingLocationId   String
+  costPerKm          Decimal           @default(0) @db.Decimal(18, 2)
+  costPerKmData      Json[]            @default([]) //[{date: "2024-01-01", cost: 1000}]
+  startingLocation   TransportLocation @relation(fields: [startingLocationId], references: [id], onDelete: Cascade, name: "StartingTransportation")
+  endingLocation     TransportLocation @relation(fields: [endingLocationId], references: [id], onDelete: Cascade, name: "EndingTransportation")
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  transportation     Transportation[]
 }
 
-enum AppointmentStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-  CANCELLED
-  COMPLETED
+model Transportation {
+  id                    String                 @id @default(cuid())
+  date                  String
+  documentDate          String
+  vehicleId             String
+  vehicle               Vehicle                @relation(fields: [vehicleId], references: [id])
+  driverId              String
+  driver                User                   @relation(fields: [driverId], references: [id])
+  transportDirectionId  String
+  transportDirection    TransportDirection     @relation(fields: [transportDirectionId], references: [id])
+  initialWeightTemp     Decimal                @default(0) @db.Decimal(18, 2)
+  documentWeightTemp    Decimal                @default(0) @db.Decimal(18, 2)
+  weightTon             Decimal                @default(0) @db.Decimal(18, 2)
+  total                 Decimal                @default(0) @db.Decimal(18, 2)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  transportationExpense TransportationExpense?
 }
 
-enum AppointmentType {
-  DOCTOR_EXAMINATION
-  LAB_TEST
-}
-
-model PatientNote {
-  id            String          @id @default(cuid())
-  appointmentId String?
-  appointment   Appointment?    @relation(fields: [appointmentId], references: [id])
-  patientId     String
-  note          String
-  type          PatientNoteType @default(GENERAL)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  patient       User            @relation(fields: [patientId], references: [id])
-}
-
-enum PatientNoteType {
-  GENERAL
-  RENTGEN
-  FLUR
-}
-
-model Prescription {
-  id            String       @id @default(cuid())
-  drugId        String
-  drug          Drug         @relation(fields: [drugId], references: [id])
-  description   String
-  appointmentId String?
-  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
-  startDate     DateTime
-  duration      Int
-  endDate       DateTime
-  userId        String
-  user          User         @relation(fields: [userId], references: [id])
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-}
-
-model Drug {
-  id           String         @id @default(cuid())
-  name         String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Prescription Prescription[]
+model TransportationExpense {
+  id               String         @id @default(cuid())
+  transportationId String         @unique
+  transportation   Transportation @relation(fields: [transportationId], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }

@@ -46,7 +46,7 @@ export const TableContent = ({
 }: Props) => {
   const { t } = useTranslation();
   return (
-    <Table fontSize="sm" size="sm" variant="simple" {...props}>
+    <Table fontSize="sm" size="sm" variant="basic" {...props}>
       <Thead>
         <Tr>
           {columns.map((column, index) => (

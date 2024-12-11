@@ -1,4 +1,4 @@
-import { AppLayout } from "@ui/components/App1Layout";
+import { AppLayout } from "@ui/components/AppLayout";
 import { Box, Img, SEO, Stack, Text, useColorModeValue } from "@ui/index";
 import NextLink from "next/link";
 
@@ -15,7 +15,6 @@ const NotFoundPage = () => {
         w={"full"}
       >
         <Box my="auto">
-          <Img src={`/icon-404.svg`} mx="auto" width="24" alt="Icon of Skull" />
           <Text
             my="auto"
             fontSize={{ base: "6xl", lg: "9xl" }}

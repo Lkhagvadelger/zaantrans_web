@@ -1,47 +1,44 @@
-import { AuthFormAdminInvite } from "@lib/auth/ui/AuthFormAdminInvite";
 import { UserRole } from "@prisma/client";
 import { QueryParamType } from "@ui/hooks/query-param";
 import {
+  Button,
   FormControl,
   FormLabel,
+  HStack,
+  Icon,
   Input,
   InputGroup,
-  Stack,
-  InputRightElement,
-  Select,
   InputLeftElement,
-  Button,
-  Icon,
   Modal,
   ModalBody,
-  useDisclosure,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useColorModeValue,
+  Stack,
+  Text,
+  useDisclosure,
 } from "@ui/index";
 import useTranslation from "next-translate/useTranslation";
 import { BsSearch } from "react-icons/bs";
-import { MdAdd } from "react-icons/md";
-import { selectInput } from "../data/types";
+import { MdDirectionsCar } from "react-icons/md";
 
-export const UsersTableActions = ({
+export const VehicleTableActions = ({
   params,
   setParam,
-  refetch,
+  roles,
 }: {
   params: QueryParamType;
   setParam: (key: string, value: string, resetPage?: boolean) => void;
-  refetch: () => void;
+  roles?: UserRole[];
 }) => {
   const { t: ta } = useTranslation("auth");
-  
+  const roleList = (roles ? roles : Object.keys(UserRole)).map((r) => ({
+    label: ta("role." + r),
+    value: r,
+  }));
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const onAdded = () => {
-    onClose();
-    refetch();
-  };
+  const onAdded = () => {};
   return (
     <>
       <Stack
@@ -55,14 +52,14 @@ export const UsersTableActions = ({
       >
         <FormControl w="64">
           <InputGroup size="sm">
-            <FormLabel srOnly>Код, утсаар хайх</FormLabel>
+            <FormLabel srOnly>Улсын дугаар, арлын дугаар</FormLabel>
             <InputLeftElement pointerEvents="none" color="gray.400" pl={1}>
               <BsSearch />
             </InputLeftElement>
             <Input
               rounded="base"
               type="search"
-              placeholder="Код, утсаар хайх..."
+              placeholder="Улсын дугаар, арлын дугаар хайх..."
               pl="8"
               pr="2"
               value={params.text}
@@ -70,31 +67,23 @@ export const UsersTableActions = ({
             />
           </InputGroup>
         </FormControl>
-        {/* <Select
-        w="40"
-        size="sm"
-        value={params.role}
-        onChange={(e) => setParam("role", e.target.value as UserRole, true)}
-      >
-        {roleList.map((role) => (
-          <option key={`option-role-${role.value}`} value={role.value}>
-            {role.label}
-          </option>
-        ))}
-      </Select> */}
+
         <Button variant={"add"} onClick={() => onOpen()}>
-          <Icon as={MdAdd} mr={2} /> Жолооч нэмэх
+          <HStack spacing={2}>
+            <Icon as={MdDirectionsCar} />
+            <Text>Машин нэмэх</Text>
+          </HStack>
         </Button>
       </Stack>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent maxW={700} bg="white">
           <ModalHeader color={"main.700"} fontWeight={700}>
-            Жолооч хэрэглэгч нэмэх
+            Машин нэмэх
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <AuthFormAdminInvite onComplete={onAdded} />
+            <></>
           </ModalBody>
         </ModalContent>
       </Modal>

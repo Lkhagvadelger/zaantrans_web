@@ -7,10 +7,9 @@ import {
   FormControl,
   FormErrorMessage,
   HStack,
-  Icon,
+  Image,
   Input,
   InputGroup,
-  InputLeftAddon,
   PinInput,
   PinInputField,
   Text,
@@ -18,7 +17,6 @@ import {
 } from "@ui/index";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { MdPerson } from "react-icons/md";
 import { AuthLayout } from ".";
 import { usePhoneConfirmation, usePhoneVerification } from "../data/authHooks";
 import { CardCaption } from "./components";
@@ -109,6 +107,13 @@ export const LoginPage = () => {
     <AuthLayout title={"Нэвтрэх"} caption={""} contentWidth="480px">
       <chakra.form onSubmit={action}>
         <Flex flex="1" gap="3" flexDir="column" borderLeftRadius={"10px"}>
+          <Image
+            src="/images/logo.png"
+            alt="logo"
+            h="120px"
+            w="120px"
+            mx="auto"
+          />
           <FormControl id="email" isInvalid={!!errors.phoneNumber}>
             <CardCaption text={"Утасны дугаар"} />
             <InputGroup>

@@ -18,17 +18,6 @@ export const columns = [
     Header: "Эрх",
     Cell: (data: any) => <Badge fontSize="11px">{data.role}</Badge>,
   },
-
-  {
-    Header: "Хариуцсан эмч",
-    Cell: (data: any) => (
-      <>
-        {/* <Box fontSize="xs" mt={1}>
-          <TimeAgo date={data.createdAt} />
-        </Box> */}
-      </>
-    ),
-  },
 ];
 
 export const UserList = () => {
@@ -40,11 +29,11 @@ export const UserList = () => {
     text: "",
     hospitalId: "",
   });
-  const { data: userList } = useUserList(params);
+  const { data: userList, refetch } = useUserList(params);
 
   return (
     <>
-      <UsersTableActions params={params} setParam={setParam} />
+      <UsersTableActions params={params} setParam={setParam} refetch={refetch} />
       <TableContent
         columns={columns}
         data={userList?.data || []}

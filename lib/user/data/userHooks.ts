@@ -59,48 +59,10 @@ export const useConnectWithLocalDoctor = (interviewId: string) =>
     )
   );
 
-export const useDoctorsBySpecialistType = ({
-  specialisttype,
-  interviewId,
-  condition,
-  probability,
-  hideMatch,
-}: {
-  specialisttype: string;
-  interviewId: string;
-  condition: string;
-  probability: number;
-  hideMatch: boolean;
-}) => {
-  return useQuery<{
-    matchType: string;
-    matchQuery: string;
-    isAssigned?: boolean;
-    isAllowedToClick?: boolean;
-  }>(
-    ["localdoctorsspecialist", specialisttype],
-    API._query(
-      Method.POST,
-      `users/localdoctors/type`,
-      {},
-      {
-        interviewId: interviewId,
-        specialisttype: specialisttype,
-        condition: condition,
-        probability: probability,
-        hideMatch: hideMatch,
-      }
-    ),
-    { enabled: !!specialisttype }
-  );
-};
-
+ 
 // Create a new user
 export const useCreateUser = () =>
-  useMutation(API._mutate(Method.POST, `user`));
-
-export const useCreateUserFromContact = () =>
-  useMutation(API._mutate(Method.POST, `users/create`));
+  useMutation(API._mutate(Method.POST, `users`));
 
 // Update an existing user
 export const useUpdateUser = (userId: string) =>

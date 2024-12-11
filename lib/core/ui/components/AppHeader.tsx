@@ -10,7 +10,6 @@ import {
 } from "@ui/index";
 import Link from "next/link";
 import { IoClose } from "react-icons/io5";
-import { Logo } from "./Logo";
 import { LanguageDropdown } from "./navigation/LanguageDropdown";
 import { ProfileMenu } from "./navigation/ProfileMenu";
 import { ThemeToggler } from "./navigation/ThemeToggler";
@@ -26,7 +25,6 @@ export const AppHeader = ({
   titleText?: string;
 }) => {
   const { isLoggedIn } = useAuth();
-  const logoColor = useColorModeValue("white", "gray.500");
   return (
     <Flex
       as="header"
@@ -50,14 +48,7 @@ export const AppHeader = ({
       >
         {titleText == "" ? (
           <>
-            <LinkBox
-              href={showThemeSwitch ? "/" : "#"}
-              box={true}
-              flexShrink={0}
-              mt={{ base: 1, lg: -1 }}
-            >
-              <Logo w={{ base: "4.8em", lg: "6.4em" }} color={logoColor} />
-            </LinkBox>
+           
           </>
         ) : (
           <>

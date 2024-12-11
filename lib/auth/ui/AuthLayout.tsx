@@ -40,6 +40,7 @@ export const AuthLayout = ({
           </Text>
           <Card
             w="full"
+            bg="#fff"
             maxW={contentWidth}
             px={{ base: 6, md: 12 }}
             py={{ base: 6, md: 12 }}

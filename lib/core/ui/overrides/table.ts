@@ -7,17 +7,16 @@ const sizes: Record<string, SystemStyleObject> = {};
 const variants = {
   basic: {
     tr: {
-      px: 0,
-      borderBottom: "1px",
+      px: "0px",
+      border: "1px",
       borderColor: "gray.100",
       td: {
-        py: "10px",
-        pl: 0,
+        py: "2px",
+        pl: "2px",
       },
       th: {
-        py: 2,
-
-        pl: 0,
+        py: "2px",
+        pl: "2px",
         color: "gray.500",
         fontWeight: "500",
         fontSize: "x-small",
