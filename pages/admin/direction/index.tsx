@@ -1,7 +1,7 @@
-import { useAuth, withRequireLogin } from "@lib/auth/ui";
-import { UserRole } from "@prisma/client";
 import { AdminLayout } from "@lib/admin/ui/layout/AdminLayout";
-import { VehicleList } from "@lib/vehicle/ui/VehicleList";
+import { useAuth, withRequireLogin } from "@lib/auth/ui";
+import { DirectionList } from "@lib/direction/ui/DirectionList";
+import { UserRole } from "@prisma/client";
 import NotFoundPage from "pages/404";
 
 const AdminUsers = () => {
@@ -10,7 +10,7 @@ const AdminUsers = () => {
     <NotFoundPage />
   ) : (
     <AdminLayout>
-      <VehicleList />
+      <DirectionList />
     </AdminLayout>
   );
 };

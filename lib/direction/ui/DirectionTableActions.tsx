@@ -23,22 +23,19 @@ import useTranslation from "next-translate/useTranslation";
 import { BsSearch } from "react-icons/bs";
 import { MdDirectionsCar } from "react-icons/md";
 
-export const VehicleTableActions = ({
+export const DirectionTableActions = ({
   params,
   setParam,
-  roles,
+  refetch,
 }: {
   params: QueryParamType;
   setParam: (key: string, value: string, resetPage?: boolean) => void;
-  roles?: UserRole[];
+  refetch: () => void;
 }) => {
-  const { t: ta } = useTranslation("auth");
-  const roleList = (roles ? roles : Object.keys(UserRole)).map((r) => ({
-    label: ta("role." + r),
-    value: r,
-  }));
   const { isOpen, onOpen, onClose } = useDisclosure();
   const onAdded = () => {};
+  const placeHolder = "Улсын дугаар, арлын дугаар хайх...";
+  const title = "Тээвэр хийх чиглэл нэмэх";
   return (
     <>
       <Stack

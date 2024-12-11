@@ -43,7 +43,7 @@ const menuItems: (MenuItemType & { items?: MenuItemType[] })[] = [
           {
             label: "Ачих, буулгах цэгүүд",
             icon: <MdWarehouse />,
-            href: "/admin/location",
+            href: "/admin/direction/location",
           },
         ],
       },

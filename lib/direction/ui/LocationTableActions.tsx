@@ -21,24 +21,21 @@ import {
 } from "@ui/index";
 import useTranslation from "next-translate/useTranslation";
 import { BsSearch } from "react-icons/bs";
-import { MdDirectionsCar } from "react-icons/md";
+import { MdDirectionsCar, MdWarehouse } from "react-icons/md";
 
 export const LocationTableActions = ({
   params,
   setParam,
-  roles,
+  refetch,
 }: {
   params: QueryParamType;
   setParam: (key: string, value: string, resetPage?: boolean) => void;
-  roles?: UserRole[];
+  refetch: () => void;
 }) => {
-  const { t: ta } = useTranslation("auth");
-  const roleList = (roles ? roles : Object.keys(UserRole)).map((r) => ({
-    label: ta("role." + r),
-    value: r,
-  }));
   const { isOpen, onOpen, onClose } = useDisclosure();
   const onAdded = () => {};
+  const placeHolder = "Ачих буулгах цэг хайх...";
+  const title = "Ачих буулгах цэг нэмэх";
   return (
     <>
       <Stack
@@ -52,14 +49,14 @@ export const LocationTableActions = ({
       >
         <FormControl w="64">
           <InputGroup size="sm">
-            <FormLabel srOnly>Улсын дугаар, арлын дугаар</FormLabel>
+            <FormLabel srOnly>{placeHolder}</FormLabel>
             <InputLeftElement pointerEvents="none" color="gray.400" pl={1}>
               <BsSearch />
             </InputLeftElement>
             <Input
               rounded="base"
               type="search"
-              placeholder="Улсын дугаар, арлын дугаар хайх..."
+              placeholder={placeHolder}
               pl="8"
               pr="2"
               value={params.text}
@@ -70,8 +67,8 @@ export const LocationTableActions = ({
 
         <Button variant={"add"} onClick={() => onOpen()}>
           <HStack spacing={2}>
-            <Icon as={MdDirectionsCar} />
-            <Text>Машин нэмэх</Text>
+            <Icon as={MdWarehouse} />
+            <Text>{title}</Text>
           </HStack>
         </Button>
       </Stack>
@@ -79,7 +76,7 @@ export const LocationTableActions = ({
         <ModalOverlay />
         <ModalContent maxW={700} bg="white">
           <ModalHeader color={"main.700"} fontWeight={700}>
-            Машин нэмэх
+            {title}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

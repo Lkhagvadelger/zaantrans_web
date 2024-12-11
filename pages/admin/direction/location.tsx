@@ -1,8 +1,8 @@
 import { useAuth, withRequireLogin } from "@lib/auth/ui";
 import { UserRole } from "@prisma/client";
 import { AdminLayout } from "@lib/admin/ui/layout/AdminLayout";
-import { VehicleList } from "@lib/vehicle/ui/VehicleList";
 import NotFoundPage from "pages/404";
+import { LocationList } from "@lib/direction/ui/LocationList";
 
 const AdminUsers = () => {
   const { user } = useAuth();
@@ -10,7 +10,7 @@ const AdminUsers = () => {
     <NotFoundPage />
   ) : (
     <AdminLayout>
-      <VehicleList />
+      <LocationList />
     </AdminLayout>
   );
 };

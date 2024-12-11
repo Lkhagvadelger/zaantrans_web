@@ -1,41 +1,41 @@
-import { useUserList } from "@lib/user/data/userHooks";
 import { Pagination } from "@ui/components/Pagination";
 import { useQueryParam } from "@ui/hooks/query-param";
 import { Badge, TableContent, Text } from "@ui/index";
-import useTranslation from "next-translate/useTranslation";
 import { useDirectionList } from "../data/directionHooks";
-import { VehicleTableActions } from "./DirectionTableActions";
+import { DirectionTableActions } from "./DirectionTableActions";
 
 export const columns = [
   {
-    Header: "Улсын дугаар",
-    Cell: (data: any) => <Text>{data.plateNumber}</Text>,
+    Header: "Чиглэлийн нэр",
+    Cell: (data: any) => <Text>{data.shortName}</Text>,
   },
   {
-    Header: "Марк",
-    Cell: (data: any) => <Badge fontSize="11px">{data.markName}</Badge>,
-  },
-
-  {
-    Header: "Модель",
-    Cell: (data: any) => <Badge fontSize="11px">{data.modelName}</Badge>,
-  },
-  {
-    Header: "Он",
-    Cell: (data: any) => <Badge fontSize="11px">{data.buildYear}</Badge>,
-  },
-  {
-    Header: "Жолооч",
+    Header: "Ачих цэг",
     Cell: (data: any) => (
-      <Badge fontSize="11px">
-        {data.driver?.lastName} {data.driver?.firstName}
-      </Badge>
+      <Badge fontSize="11px">{data.startingLocation.name}</Badge>
     ),
+  },
+  {
+    Header: "Буулгах цэг",
+    Cell: (data: any) => (
+      <Badge fontSize="11px">{data.endingLocation.name}</Badge>
+    ),
+  },
+  {
+    Header: "Нийт зай",
+    Cell: (data: any) => <Badge fontSize="11px">{data.totalDistance} км</Badge>,
+  },
+  {
+    Header: "Нийт хугацаа",
+    Cell: (data: any) => <Badge fontSize="11px">{data.totalTime} цаг</Badge>,
+  },
+  {
+    Header: "Км-ийн үнэ",
+    Cell: (data: any) => <Badge fontSize="11px">{data.costPerKm}₮</Badge>,
   },
 ];
 
 export const DirectionList = () => {
-  const { t: td } = useTranslation("local-doctor");
   const { params, setParam } = useQueryParam({
     size: "10",
     page: "1",
@@ -43,18 +43,22 @@ export const DirectionList = () => {
     text: "",
     hospitalId: "",
   });
-  const { data: vehicleList } = useDirectionList(params);
+  const { data: directionList, refetch } = useDirectionList(params);
 
   return (
     <>
-      <VehicleTableActions params={params} setParam={setParam} />
-      <TableContent columns={columns} data={vehicleList?.data || []} mt="4" />
+      <DirectionTableActions
+        params={params}
+        setParam={setParam}
+        refetch={refetch}
+      />
+      <TableContent columns={columns} data={directionList?.data || []} mt="4" />
       <Pagination
-        name={"Машины бүртгэл"}
+        name={"Тээвэр хийх чиглэл"}
         size={Number(params.size)}
         page={Number(params.page)}
-        total={vehicleList?.total}
-        pages={vehicleList?.pages}
+        total={directionList?.total}
+        pages={directionList?.pages}
         filtered={!!(params.text || params.role)}
         onChange={(page) => setParam("page", page.toString())}
       />
